@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <title>Hello</title>
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="">
+            <h1 class="title is-5" style="color: white;font-weight:bold;">Live Bus Tracker</h1>
+          </a>
+      
+        </div>
+      </nav>
+
+    <p id="url_param" style="display: none;">{{bus.unq}}</p>
+  <div class="container">
+    <h2 style="text-align: center;margin:25px 0px 0px 0px;" class="title is-3 is-primary">Current Location of Bus</h2>
+    <div class="columns">
+        <div class="column" style="margin: 20px 20px;"><h1 class="notification is-primary"><b>Bus No: {{bus.bnum}}</b></h1></div>
+        <div class="column" id=""
+        style="margin: 20px 20px;"><h2 class="notification is-primary">Cur Location: <b id="curloc">{{bus.b_cur_stop}}</b></h2></div>
+    </div>
+    <a href="/" onclick="closeSock()" class="button is-info" style="margin: 0px 20px;">Back</a>
+  </div>
+
+    <script>
+        const roomName = document.getElementById('url_param').textContent
+        const ws = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/'
+            + roomName
+            + '/'
+        );
+        function closeSock(e){
+            ws.close()
+            console.log("CLosed")
+        }
+        ws.onmessage = function(e) {
+          console.log(e.data)
+          z = JSON.parse(e.data)
+          document.getElementById('curloc').innerText = z.message
+
+        };
+
+        ws.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+    </script>
+</body>
+</html>

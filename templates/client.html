@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <title>Live Bus Track</title>
+
+    <style>
+        .notification{
+            margin: 0px 30px;
+            max-width: 300px;
+        }
+        .notification a:hover{
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="">
+            <h1 class="title is-5" style="color: white;font-weight:bold;">Live Bus Tracker</h1>
+          </a>
+      
+        </div>
+      </nav>
+
+   <div class="container">
+    <h1 style="margin:20px 30px">Current Buses</h1>
+
+   
+    <div>
+
+        {% for bus in buses %}
+            <div class="notification is-primary">
+                <a href="/{{bus.pk}}">{{bus.bnum}}</a> <br>
+            </div>
+        {% endfor %}
+
+    </div>
+   </div>
+
+</body>
+</html>

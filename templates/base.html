@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+    <title>Admin - Bus</title>
+    <style>
+        .column{
+            background-color: #00d1b2;
+            padding: 8px 20px;
+            margin: 50px 5px 0px 5px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+        }
+        button{
+            margin-left: 10px;
+        }
+
+        select{
+            min-width: 60px;
+            border: none;
+            padding: 4px 20px;
+            outline: none;
+            outline: none;
+            margin-left: 10px;
+        }
+        label{
+            color: white;
+
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item" href="">
+            <h1 class="title is-5" style="color: white;font-weight:bold;">Live Bus Tracker</h1>
+          </a>
+      
+        </div>
+    </nav>
+
+    <h1 style="text-align: center;margin-top: 30px;font-weight:bold;font-size:1.8rem;">ADMIN SECTION</h1>
+
+   <div class="container">
+       
+       <p id="url_param" style="display: none;"></p>
+       <div class="columns">
+        <div class="column">
+            <label for="route_h">Route</label>
+            <select name="route_h" id="route">
+            {% for route in routes %}
+                <option value="{{route}}">{{route}}</option>
+            {% endfor %}
+            </select>   
+            <button value="Update" id="btn" class="button is-info">Connect</button>
+        </div>
+
+        <div class="column">
+            <label for="stops_c">Stops</label>
+            <select name="stops_c" id="stops">
+            </select>
+            <button value="Update Stop" id="btn1" class="button is-info">Update Stop</button>
+        </div>
+    </div>
+
+   </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+
+        let route = document.getElementById("route")
+        let eleOp = document.createElement('option')
+        let btn = document.getElementById('btn')
+        let roomName = document.getElementById('url_param')
+
+        eleOp.value = '---'
+        eleOp.innerText = '---'
+
+        route.addEventListener('change',(e) => {
+            axios.get(`http://${window.location.host}/driveside/${route.value}`)
+            .then((result) => {
+                let data = result.data.d
+                roomName.innerText = result.data.b[0].unq
+                let stops = document.getElementById("stops")
+                stops.innerHTML = ''
+                stops.appendChild(eleOp)
+                data.forEach((val, idx, data) => {
+                    let ele = document.createElement('option')
+                    ele.value = val.sname
+                    ele.innerHTML = val.sname
+                    stops.appendChild(ele)
+                })
+            }).catch((err) => {
+                console.log(err)
+            });
+        })
+
+        obj = {}
+
+        btn.addEventListener('click', (e) => {
+            console.log("Web Socket Connection...")
+            let roomN = document.getElementById('url_param')
+            console.log(roomN.innerText)
+            const ws = new WebSocket(
+                'ws://'
+                + window.location.host
+                + '/ws/'
+                + roomN.innerText
+                + '/'
+                );
+            obj.ws = ws
+        })
+
+        let btn2 = document.getElementById('btn1')
+
+        btn2.addEventListener('click', () => {
+            let stops = document.getElementById('stops').value
+            myObj = {}
+            myObj.stop = stops
+            myObj.r = route.value
+            obj.ws.send(JSON.stringify(myObj))
+        })
+    </script>
+</body>
+</html>
